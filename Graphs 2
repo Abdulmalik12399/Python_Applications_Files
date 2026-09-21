@@ -1,0 +1,30 @@
+import os
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+path = r"C:\Users\HP\OneDrive\Attachments\Desktop\New folder"
+os.chdir(path)
+
+data = {
+    "Name":["Abdul","Pooja","Rahul","Nidhi","Aman","Priya","Rohit","Neha"],
+    "Gender":["Male","Female","Male","Female","Male","Female","Male","Female"],
+    "Department":["BCA","BCA","BBA","BBA","BCA","BBA","BCA","BBA"],
+    "Marks":[90,85,78,92,88,80,75,95]
+}
+
+df = pd.DataFrame(data)
+print(df)
+sns.lineplot(data=df,x="Name",y="Department",hue="Gender")
+plt.savefig("Distribute.png")
+plt.show()
+sns.countplot(data=df,x="Department",hue="Gender")
+plt.savefig("Depart.jpg")
+plt.show()
+ax = sns.countplot(data=df, x="Department", hue="Gender")
+
+for i in ax.containers:
+    ax.bar_label(i)
+
+plt.savefig("Number.png")
+plt.show()
+   
