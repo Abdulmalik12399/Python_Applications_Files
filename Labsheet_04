@@ -1,0 +1,598 @@
+import tensorflow as tf
+print("TensorFlow Version:", tf.__version__)
+print("TensorFlow installed successfully!")
+```
+
+**Output:**
+```text
+TensorFlow Version: 2.x.x
+TensorFlow installed successfully!
+```
+
+*Note: `2.x.x` ki jagah installed TensorFlow ka actual version aayega.*
+
+## Q2. Create a Linear Regression Model
+
+**Program:**
+```python
+import tensorflow as tf
+
+x = tf.constant([1., 2., 3., 4.])
+y = tf.constant([3., 5., 7., 9.])
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(1,)),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer=tf.keras.optimizers.SGD(0.05),
+              loss="mse")
+
+model.fit(x, y, epochs=300, verbose=0)
+
+print("Prediction:", model.predict(
+    tf.constant([[5.]]), verbose=0
+).flatten())
+```
+
+**Output:**
+```text
+Prediction: [approximately 11.]
+```
+
+## Q3. Element-Wise Matrix Multiplication
+
+**Program:**
+```python
+import tensorflow as tf
+
+A = tf.constant([[1, 2], [3, 4]])
+B = tf.constant([[5, 6], [7, 8]])
+
+C = tf.multiply(A, B)
+
+print("Matrix A:\n", A.numpy())
+print("Matrix B:\n", B.numpy())
+print("Element-wise Multiplication:\n", C.numpy())
+```
+
+**Output:**
+```text
+Matrix A:
+[[1 2]
+ [3 4]]
+
+Matrix B:
+[[5 6]
+ [7 8]]
+
+Element-wise Multiplication:
+[[ 5 12]
+ [21 32]]
+```
+
+## Q4. Compute Gradients Using tf.GradientTape
+
+**Program:**
+```python
+import tensorflow as tf
+
+x = tf.Variable(3.0)
+
+with tf.GradientTape() as tape:
+    y = x ** 2 + 2 * x + 1
+
+gradient = tape.gradient(y, x)
+
+print("Value of y:", y.numpy())
+print("Gradient:", gradient.numpy())
+```
+
+**Output:**
+```text
+Value of y: 16.0
+Gradient: 8.0
+```
+
+## Q5. Create a Custom Loss Function
+
+**Program:**
+```python
+import tensorflow as tf
+
+def custom_loss(y_true, y_pred):
+    return tf.reduce_mean(tf.square(y_true - y_pred))
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(1,)),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer="adam", loss=custom_loss)
+
+x = tf.constant([[1.], [2.], [3.], [4.]])
+y = tf.constant([[2.], [4.], [6.], [8.]])
+
+model.fit(x, y, epochs=5, verbose=0)
+
+print("Custom loss function used successfully.")
+print("Final loss:", model.evaluate(x, y, verbose=0))
+```
+
+**Output:**
+```text
+Custom loss function used successfully.
+Final loss: A numerical loss value
+```
+
+*Final loss training ke according change hogi.*
+
+## Q6. Implement ReLU Activation Function
+
+**Program:**
+```python
+import tensorflow as tf
+
+x = tf.constant([-3., -1., 0., 2., 5.])
+result = tf.nn.relu(x)
+
+print("Input:", x.numpy())
+print("ReLU Output:", result.numpy())
+```
+
+**Output:**
+```text
+Input: [-3. -1.  0.  2.  5.]
+ReLU Output: [0. 0. 0. 2. 5.]
+```
+
+## Q7. Train a Neural Network to Approximate the Sine Function
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.linspace(-np.pi, np.pi, 500).astype("float32")
+y = np.sin(x)
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(1,)),
+    tf.keras.layers.Dense(32, activation="tanh"),
+    tf.keras.layers.Dense(32, activation="tanh"),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer="adam", loss="mse")
+model.fit(x, y, epochs=200, verbose=0)
+
+pred = model.predict(x, verbose=0)
+
+print("Actual sin(0):", np.sin(0))
+print("Predicted sin(0):",
+      model.predict(np.array([[0.]], dtype="float32"),
+                    verbose=0)[0, 0])
+
+plt.plot(x, y, label="Actual Sine")
+plt.plot(x, pred, label="Predicted Sine")
+plt.legend()
+plt.title("Sine Function Approximation")
+plt.show()
+```
+
+**Output:**
+```text
+Actual sin(0): 0.0
+Predicted sin(0): Approximately 0.0
+```
+
+**Result:** Graph mein actual aur predicted sine curves dikhengi. Training ke baad curves approximately overlap karengi.
+
+## Q8. Feedforward Neural Network for Binary Classification
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.array([
+    [0, 0], [0, 1], [1, 0], [1, 1],
+    [0.1, 0.2], [0.2, 0.9],
+    [0.9, 0.1], [0.8, 0.9]
+], dtype="float32")
+
+y = np.array([0, 0, 0, 1, 0, 0, 0, 1],
+             dtype="float32")
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(2,)),
+    tf.keras.layers.Dense(8, activation="relu"),
+    tf.keras.layers.Dense(1, activation="sigmoid")
+])
+
+model.compile(optimizer="adam",
+              loss="binary_crossentropy",
+              metrics=["accuracy"])
+
+model.fit(x, y, epochs=100, verbose=0)
+
+loss, accuracy = model.evaluate(x, y, verbose=0)
+
+print("Loss:", round(loss, 4))
+print("Accuracy:", round(accuracy, 4))
+
+prediction = model.predict(
+    np.array([[0.9, 0.9]], dtype="float32"),
+    verbose=0
+)
+
+print("Predicted class:", int(prediction[0, 0] >= 0.5))
+```
+
+**Output:**
+```text
+Loss: A numerical value
+Accuracy: A value between 0 and 1
+Predicted class: 1
+```
+
+*Accuracy exact training results par depend karegi.*
+
+## Q9. Visualize Model Using summary() and plot_model()
+
+**Program:**
+```python
+import tensorflow as tf
+from tensorflow.keras.utils import plot_model
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(4,)),
+    tf.keras.layers.Dense(8, activation="relu"),
+    tf.keras.layers.Dense(3, activation="softmax")
+])
+
+print("Model Architecture:")
+model.summary()
+
+try:
+    plot_model(model, to_file="model.png",
+               show_shapes=True, show_layer_names=True)
+    print("Model diagram saved as model.png")
+except Exception as e:
+    print("Diagram could not be generated:", e)
+```
+
+**Output:**
+```text
+Model Architecture:
+Model: "sequential"
+...
+dense (Dense)       (None, 8)
+dense_1 (Dense)     (None, 3)
+Total params: 67
+
+Model diagram saved as model.png
+```
+
+*Diagram banane ke liye `pydot` aur Graphviz properly installed hone chahiye. Layer names aur summary formatting version ke according change ho sakte hain.*
+
+## Q10. Save and Load a Trained Keras Model
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+
+x = np.array([[1.], [2.], [3.], [4.]], dtype="float32")
+y = np.array([[2.], [4.], [6.], [8.]], dtype="float32")
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(1,)),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer="adam", loss="mse")
+model.fit(x, y, epochs=100, verbose=0)
+
+model.save("my_model.keras")
+print("Model saved successfully.")
+
+loaded_model = tf.keras.models.load_model("my_model.keras")
+
+print("Model loaded successfully.")
+print("Prediction:",
+      loaded_model.predict(np.array([[5.]], dtype="float32"),
+                           verbose=0))
+```
+
+**Output:**
+```text
+Model saved successfully.
+Model loaded successfully.
+Prediction: [[A numerical prediction]]
+```
+
+## Q11. Use EarlyStopping and ModelCheckpoint
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.arange(100, dtype="float32").reshape(-1, 1) / 100
+y = 2 * x + 1
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(1,)),
+    tf.keras.layers.Dense(16, activation="relu"),
+    tf.keras.layers.Dense(1)
+])
+
+model.compile(optimizer="adam", loss="mse")
+
+callbacks = [
+    tf.keras.callbacks.EarlyStopping(
+        monitor="val_loss", patience=5,
+        restore_best_weights=True
+    ),
+    tf.keras.callbacks.ModelCheckpoint(
+        "best_model.keras",
+        monitor="val_loss",
+        save_best_only=True
+    )
+]
+
+history = model.fit(
+    x, y, epochs=50, batch_size=16,
+    validation_split=0.2, callbacks=callbacks,
+    verbose=0
+)
+
+print("Training completed.")
+print("Epochs executed:", len(history.history["loss"]))
+print("Best model saved as best_model.keras")
+```
+
+**Output:**
+```text
+Training completed.
+Epochs executed: Depends on early stopping
+Best model saved as best_model.keras
+```
+
+## Q12. Use Dropout to Reduce Overfitting
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.random.rand(200, 10).astype("float32")
+y = (x.sum(axis=1) > 5).astype("float32")
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(10,)),
+    tf.keras.layers.Dense(64, activation="relu"),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(32, activation="relu"),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(1, activation="sigmoid")
+])
+
+model.compile(optimizer="adam",
+              loss="binary_crossentropy",
+              metrics=["accuracy"])
+
+history = model.fit(
+    x, y, epochs=20, batch_size=16,
+    validation_split=0.2, verbose=0
+)
+
+print("Training accuracy:",
+      round(history.history["accuracy"][-1], 4))
+print("Validation accuracy:",
+      round(history.history["val_accuracy"][-1], 4))
+print("Dropout helps reduce overfitting.")
+```
+
+**Output:**
+```text
+Training accuracy: A numerical value
+Validation accuracy: A numerical value
+Dropout helps reduce overfitting.
+```
+
+**Explanation:** Dropout training ke dauran kuch neurons ko randomly deactivate karta hai. Isse model training data par excessively dependent hone se bach sakta hai. Lekin dropout overfitting ko eliminate karne ki guarantee nahi deta.
+
+## Q13. Functional API for Multiple Inputs and Outputs
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+
+input1 = tf.keras.Input(shape=(2,), name="input_one")
+input2 = tf.keras.Input(shape=(2,), name="input_two")
+
+combined = tf.keras.layers.Concatenate()([input1, input2])
+hidden = tf.keras.layers.Dense(8, activation="relu")(combined)
+
+output1 = tf.keras.layers.Dense(1, name="output_one")(hidden)
+output2 = tf.keras.layers.Dense(1, activation="sigmoid",
+                               name="output_two")(hidden)
+
+model = tf.keras.Model(
+    inputs=[input1, input2],
+    outputs=[output1, output2]
+)
+
+model.compile(
+    optimizer="adam",
+    loss={"output_one": "mse",
+          "output_two": "binary_crossentropy"}
+)
+
+a = np.random.rand(20, 2).astype("float32")
+b = np.random.rand(20, 2).astype("float32")
+y1 = np.random.rand(20, 1).astype("float32")
+y2 = np.random.randint(0, 2, (20, 1)).astype("float32")
+
+model.fit(
+    {"input_one": a, "input_two": b},
+    {"output_one": y1, "output_two": y2},
+    epochs=5, verbose=0
+)
+
+result = model.predict(
+    {"input_one": a[:1], "input_two": b[:1]},
+    verbose=0
+)
+
+print("Output one:", result[0])
+print("Output two:", result[1])
+```
+
+**Output:**
+```text
+Output one: [[A numerical value]]
+Output two: [[A value between 0 and 1]]
+```
+
+## Q14. Hyperparameter Tuning Using Keras Tuner
+
+**Installation:**
+```bash
+pip install keras-tuner
+```
+
+**Program:**
+```python
+import tensorflow as tf
+import keras_tuner as kt
+import numpy as np
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.random.rand(200, 4).astype("float32")
+y = (x.sum(axis=1) > 2).astype("float32")
+
+def build_model(hp):
+    model = tf.keras.Sequential([
+        tf.keras.Input(shape=(4,)),
+        tf.keras.layers.Dense(
+            hp.Choice("units", [8, 16, 32]),
+            activation="relu"
+        ),
+        tf.keras.layers.Dense(1, activation="sigmoid")
+    ])
+
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(
+            learning_rate=hp.Choice(
+                "learning_rate", [0.001, 0.01]
+            )
+        ),
+        loss="binary_crossentropy",
+        metrics=["accuracy"]
+    )
+    return model
+
+tuner = kt.RandomSearch(
+    build_model,
+    objective="val_accuracy",
+    max_trials=3,
+    directory="tuner_dir",
+    project_name="lab04"
+)
+
+tuner.search(
+    x, y, epochs=5,
+    validation_split=0.2, verbose=0
+)
+
+best = tuner.get_best_hyperparameters(1)[0]
+
+print("Best units:", best.get("units"))
+print("Best learning rate:", best.get("learning_rate"))
+```
+
+**Output:**
+```text
+Best units: 8, 16, or 32
+Best learning rate: 0.001 or 0.01
+```
+
+*Actual selected values depend on the tuning results.*
+
+## Q15. Plot Training and Validation Loss and Accuracy
+
+**Program:**
+```python
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+tf.random.set_seed(42)
+
+x = np.random.rand(300, 4).astype("float32")
+y = (x.sum(axis=1) > 2).astype("float32")
+
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(4,)),
+    tf.keras.layers.Dense(16, activation="relu"),
+    tf.keras.layers.Dense(1, activation="sigmoid")
+])
+
+model.compile(optimizer="adam",
+              loss="binary_crossentropy",
+              metrics=["accuracy"])
+
+history = model.fit(
+    x, y, epochs=20, batch_size=16,
+    validation_split=0.2, verbose=0
+)
+
+plt.figure(figsize=(10, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history["loss"], label="Training Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
+plt.title("Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history["accuracy"], label="Training Accuracy")
+plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
+plt.title("Accuracy Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+print("Training and validation curves displayed.")
+```
+
+**Output:**
+```text
+Two graphs displayed:
+1. Training Loss vs Validation Loss
+2. Training Accuracy vs Validation Accuracy
