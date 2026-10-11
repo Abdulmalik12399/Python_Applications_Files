@@ -1,0 +1,407 @@
+### Q1. Load and Display an Image
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    cv2.imshow("Original Image", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q2. Convert Color Image to Grayscale
+
+```python
+import cv2
+import matplotlib.pyplot as plt
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    color = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(color)
+    plt.title("Color Image")
+    plt.axis("off")
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(gray, cmap="gray")
+    plt.title("Grayscale Image")
+    plt.axis("off")
+
+    plt.show()
+else:
+    print("Image not found!")
+```
+
+### Q3. Display RGB and HSV Images
+
+```python
+import cv2
+import matplotlib.pyplot as plt
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(rgb)
+    plt.title("RGB Image")
+    plt.axis("off")
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(hsv)
+    plt.title("HSV Image")
+    plt.axis("off")
+
+    plt.show()
+else:
+    print("Image not found!")
+```
+
+### Q4. Resize Image to 200 × 200 Pixels
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    resized = cv2.resize(img, (200, 200))
+    cv2.imwrite("resized.jpg", resized)
+    cv2.imshow("Resized Image", resized)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q5. Rotate Image by 45 Degrees
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    h, w = img.shape[:2]
+    matrix = cv2.getRotationMatrix2D((w // 2, h // 2), 45, 1)
+    rotated = cv2.warpAffine(img, matrix, (w, h))
+
+    cv2.imshow("Rotated Image", rotated)
+    cv2.imwrite("rotated.jpg", rotated)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q6. Flip Image Horizontally, Vertically and Both
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    horizontal = cv2.flip(img, 1)
+    vertical = cv2.flip(img, 0)
+    both = cv2.flip(img, -1)
+
+    cv2.imshow("Horizontal Flip", horizontal)
+    cv2.imshow("Vertical Flip", vertical)
+    cv2.imshow("Both Flips", both)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q7. Crop a Specific Region
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    crop = img[50:250, 50:250]
+
+    if crop.size > 0:
+        cv2.imshow("Cropped Image", crop)
+        cv2.imwrite("crop.jpg", crop)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    else:
+        print("Invalid crop region!")
+else:
+    print("Image not found!")
+```
+
+### Q8. Detect Faces Using Haar Cascade
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades +
+        "haarcascade_frontalface_default.xml"
+    )
+
+    faces = face_cascade.detectMultiScale(
+        gray, scaleFactor=1.1, minNeighbors=5
+    )
+
+    for x, y, w, h in faces:
+        cv2.rectangle(
+            img, (x, y), (x + w, y + h), (0, 255, 0), 2
+        )
+
+    print("Faces detected:", len(faces))
+    cv2.imshow("Face Detection", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q9. Detect Eyes Using Haar Cascade
+
+```python
+import cv2
+
+img = cv2.imread("scene.jpg")
+
+if img is not None:
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    eye_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_eye.xml"
+    )
+
+    eyes = eye_cascade.detectMultiScale(
+        gray, scaleFactor=1.1, minNeighbors=5
+    )
+
+    for x, y, w, h in eyes:
+        cv2.rectangle(
+            img, (x, y), (x + w, y + h), (255, 0, 0), 2
+        )
+
+    print("Eyes detected:", len(eyes))
+    cv2.imshow("Eye Detection", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("Image not found!")
+```
+
+### Q10. Detect and Classify Geometric Shapes
+
+```python
+import cv2
+
+img = cv2.imread("shapes.jpg")
+
+if img is not None:
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blur, 50, 150)
+
+    contours, _ = cv2.findContours(
+        edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    for c in contours:
+        if cv2.contourArea(c) < 100:
+            continue
+
+        approx = cv2.approxPolyDP(
+            c, 0.04 * cv2.arcLength(c, True), True
+        )
+
+        x, y, w, h = cv2.boundingRect(approx)
+
+        if len(approx) == 3:
+            shape = "Triangle"
+        elif len(approx) == 4:
+            shape = "Rectangle"
+        else:
+            area = cv2.contourArea(c)
+            perimeter = cv2.arcLength(c, True)
+            circularity = (
+                4 * 3.14159 * area / (perimeter ** 2)
+                if perimeter > 0 else 0
+            )
+            shape = "Circle" if circularity > 0.75 else "Other"
+
+        cv2.drawContours(img, [c], -1, (0, 255, 0), 2)
+        cv2.putText(
+            img, shape, (x, max(y - 5, 20)),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2
+        )
+
+    cv2.imshow("Shape Detection", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+else:
+    print("shapes.jpg not found!")
+```
+
+### Q11. Capture and Display Live Webcam Video
+
+```python
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Cannot open webcam!")
+else:
+    while True:
+        ret, frame = cap.read()
+
+        if not ret:
+            print("Cannot receive video!")
+            break
+
+        cv2.imshow("Live Webcam", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Q12. Convert Webcam Video to Grayscale in Real Time
+
+```python
+import cv2
+
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Cannot open webcam!")
+else:
+    while True:
+        ret, frame = cap.read()
+
+        if not ret:
+            break
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.imshow("Grayscale Webcam", gray)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Q13. Capture and Save 100 Webcam Frames
+
+```python
+import cv2
+import os
+
+cap = cv2.VideoCapture(0)
+os.makedirs("frames", exist_ok=True)
+count = 0
+
+if not cap.isOpened():
+    print("Cannot open webcam!")
+else:
+    while count < 100:
+        ret, frame = cap.read()
+
+        if not ret:
+            break
+
+        count += 1
+        filename = f"frames/frame_{count:03d}.jpg"
+        cv2.imwrite(filename, frame)
+
+        cv2.imshow("Frame Capture", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+cap.release()
+cv2.destroyAllWindows()
+print("Total frames saved:", count)
+```
+
+### Q14. Draw Rectangle, Circle and Line on a Blank Canvas
+
+```python
+import cv2
+import numpy as np
+
+img = np.zeros((400, 600, 3), dtype=np.uint8)
+
+cv2.rectangle(
+    img, (50, 50), (200, 200), (0, 255, 0), 3
+)
+
+cv2.circle(
+    img, (350, 120), 60, (255, 0, 0), 3
+)
+
+cv2.line(
+    img, (50, 300), (500, 300), (0, 0, 255), 3
+)
+
+cv2.imshow("Drawing Shapes", img)
+cv2.imwrite("drawing.jpg", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+### Q15. Add Text Using Different Font Styles and Sizes
+
+```python
+import cv2
+import numpy as np
+
+img = np.zeros((400, 700, 3), dtype=np.uint8)
+
+cv2.putText(
+    img, "Simplex Font", (30, 80),
+    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
+)
+
+cv2.putText(
+    img, "Complex Font", (30, 160),
+    cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2
+)
+
+cv2.putText(
+    img, "Small Text", (30, 240),
+    cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2
+)
+
+cv2.putText(
+    img, "Large Text", (30, 330),
+    cv2.FONT_HERSHEY_DUPLEX, 1.5, (0, 255, 255), 3
+)
+
+cv2.imshow("Text Styles", img)
+cv2.imwrite("text_styles.jpg", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
